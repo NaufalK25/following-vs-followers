@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --github-bg: #0d1117;
+  --github-card: #161b22;
+  --github-overlay: #1c2128;
+  --github-text-primary: #c9d1d9;
+  --github-text-secondary: #8b949e;
+  --github-text-placeholder: #6e7681;
+  --github-border-primary: #30363d;
+  --github-border-muted: #21262d;
+  --github-button-primary-bg: #238636;
+  --github-button-primary-text: #ffffff;
+  --github-accent-link: #58a6ff;
+  --github-accent-hover: #1f6feb;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+code,
+pre {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+    monospace;
+}
