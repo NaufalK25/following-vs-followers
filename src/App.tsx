@@ -60,7 +60,7 @@ const App = () => {
     }
 
     const followingResponse = await fetch(`https://api.github.com/users/${username}/following?per_page=${fetchedUser.following}`);
-    const followingData = await followingResponse.json();
+    const followingData = (await followingResponse.json()).filter((followingUser: User) => followingUser.type === 'User');
 
     const followersResponse = await fetch(`https://api.github.com/users/${username}/followers?per_page=${fetchedUser.followers}`);
     const followersData = await followersResponse.json();
@@ -73,14 +73,17 @@ const App = () => {
   }
 
   const getNotFollowing = (following: User[], followers: User[]) => {
-    const notFollowingData = followers.filter(follower => !following.some(followingUser => followingUser.login === follower.login));
+    const notFollowingData = following.filter(followingUser => !followers.some(follower => follower.login === followingUser.login));
     setNotFollowing(notFollowingData);
   }
 
   const getNotFollowers = (following: User[], followers: User[]) => {
-    const notFollowersData = following.filter(followingUser => !followers.some(follower => follower.login === followingUser.login));
+    const notFollowersData = followers.filter(follower => !following.some(followingUser => followingUser.login === follower.login));
     setNotFollowers(notFollowersData);
   }
+
+
+
 
   return (
     <>
