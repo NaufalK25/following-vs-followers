@@ -33,6 +33,7 @@ const App = () => {
       toast.dismiss(loadingToast);
       toast.error(t('apiRateLimit'));
       setUsername('');
+      setCurrentUsername('');
       return;
     }
 
@@ -40,6 +41,7 @@ const App = () => {
       toast.dismiss(loadingToast);
       toast.error(t('userNotFound'));
       setUsername('');
+      setCurrentUsername('');
       return;
     }
 
