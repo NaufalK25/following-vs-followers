@@ -3,7 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import LanguageChanger from './components/LanguageChanger';
 import UserCard from './components/UserCard';
-import { User } from './type';
+import { User, UserType } from './type';
 import './App.css';
 
 const App = () => {
@@ -62,7 +62,7 @@ const App = () => {
     }
 
     const followingResponse = await fetch(`https://api.github.com/users/${username}/following?per_page=${fetchedUser.following}`);
-    const followingData = (await followingResponse.json()).filter((followingUser: User) => followingUser.type === 'User');
+    const followingData = (await followingResponse.json()).filter((followingUser: User) => followingUser.type === UserType.User);
 
     const followersResponse = await fetch(`https://api.github.com/users/${username}/followers?per_page=${fetchedUser.followers}`);
     const followersData = await followersResponse.json();

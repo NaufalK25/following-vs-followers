@@ -15,7 +15,14 @@ export type User = {
   repos_url: string;
   events_url: string;
   received_events_url: string;
-  type: string;
+  type: UserType;
   user_view_type: string;
   site_admin: boolean;
 };
+
+export const UserType = {
+  User: "User",
+  Organization: "Organization",
+} as const;
+
+type UserType = (typeof UserType)[keyof typeof UserType];
