@@ -21,7 +21,7 @@ const App = () => {
 
 
   const getAll = async () => {
-    setNotFollowers([]);
+    setNotFollowing([]);
     setNotFollowers([]);
 
     const loadingToast = toast.loading(t('fetchingData'));
