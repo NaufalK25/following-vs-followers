@@ -60,9 +60,9 @@ const App = () => {
 
     if (following > 2000 || followers > 2000) {
       const maxDataLabel = following >= followers ? t('following') : t('followers');
-      const maxDataCount = Math.max(following, followers);
+      const maxDataCount = new Intl.NumberFormat('id-ID').format(Math.max(following, followers));
       toast.dismiss(loadingToast);
-      toast.error(t('tooManyData', { label: maxDataLabel, count: maxDataCount }));
+      toast.error(t('tooManyData', { dataLabel: maxDataLabel, dataCount: maxDataCount }));
       setUsername('');
       return;
     }

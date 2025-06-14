@@ -27,7 +27,7 @@ export default {
   apiRateLimit: "Batas pemakaian API terlampaui. Silakan coba lagi nanti",
   userNotFound: "Pengguna tidak ditemukan",
   tooManyData:
-    "Data {{label}} terlalu banyak ({{count}}). Coba pengguna lain.",
+    "Data {{dataLabel}} terlalu banyak ({{dataCount}}). Coba pengguna lain.",
   dataSuccessfullyFetched: "Data pengikut dan diikuti berhasil diambil",
 
   // Language

@@ -27,7 +27,7 @@ export default {
   apiRateLimit: "API rate limit exceeded. Please try again later",
   userNotFound: "User not found",
   tooManyData:
-    "Too many {{label}} data ({{count}}). Please try another user.",
+    "Too many {{dataLabel}} data ({{dataCount}}). Please try another user.",
   dataSuccessfullyFetched: "Following and followers data fetched successfully",
 
   // Language
