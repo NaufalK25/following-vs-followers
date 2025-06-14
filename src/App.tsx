@@ -10,7 +10,6 @@ const App = () => {
   const { t } = useTranslation();
 
   const [username, setUsername] = useState('');
-  const [currentUsername, setCurrentUsername] = useState('');
   const [notFollowing, setNotFollowing] = useState<User[]>([]);
   const [notFollowers, setNotFollowers] = useState<User[]>([]);
 
@@ -26,14 +25,21 @@ const App = () => {
 
     const loadingToast = toast.loading(t('fetchingData'));
 
-    const userResponse = await fetch(`https://api.github.com/users/${username}`);
+    const token = import.meta.env.VITE_GH_TOKEN;
+
+    const headers = {
+      Authorization: `token ${token}`,
+    };
+
+    const userResponse = await fetch(`https://api.github.com/users/${username}`, {
+      headers
+    });
     const userData = await userResponse.json();
 
     if (userResponse.status === 403) {
       toast.dismiss(loadingToast);
       toast.error(t('apiRateLimit'));
       setUsername('');
-      setCurrentUsername('');
       return;
     }
 
@@ -41,7 +47,6 @@ const App = () => {
       toast.dismiss(loadingToast);
       toast.error(t('userNotFound'));
       setUsername('');
-      setCurrentUsername('');
       return;
     }
 
@@ -51,21 +56,55 @@ const App = () => {
       followers: userData.followers,
     };
 
-    setCurrentUsername(fetchedUser.username);
+    const { followers, following } = fetchedUser;
 
-    if (fetchedUser.following > 100) {
-      fetchedUser.following = 100;
+    if (following > 2000 || followers > 2000) {
+      const maxDataLabel = following >= followers ? t('following') : t('followers');
+      const maxDataCount = Math.max(following, followers);
+      toast.dismiss(loadingToast);
+      toast.error(t('tooManyData', { label: maxDataLabel, count: maxDataCount }));
+      setUsername('');
+      return;
     }
 
-    if (fetchedUser.followers > 100) {
-      fetchedUser.followers = 100;
-    }
+    const updateToast = (msg: string) => {
+      toast.loading(msg, { id: loadingToast });
+    };
 
-    const followingResponse = await fetch(`https://api.github.com/users/${username}/following?per_page=${fetchedUser.following}`);
-    const followingData = (await followingResponse.json()).filter((followingUser: User) => followingUser.type === UserType.User);
+    const fetchAll = async (url: string, total: number, label: string, updateToast: (message: string) => void) => {
+      let page = 1;
+      let results: User[] = [];
 
-    const followersResponse = await fetch(`https://api.github.com/users/${username}/followers?per_page=${fetchedUser.followers}`);
-    const followersData = await followersResponse.json();
+      while (true) {
+        const response = await fetch(`${url}?per_page=100&page=${page}`, { headers });
+        const data = await response.json();
+
+        if (!Array.isArray(data) || data.length === 0) break;
+
+        results = results.concat(data);
+
+        const percent = Math.min(Math.round((results.length / total) * 100), 100);
+        updateToast(`${t('fetching')} ${t(label)}: ${percent}%`);
+
+        page++;
+      }
+
+      return results;
+    };
+
+    const followingData = (await fetchAll(
+      `https://api.github.com/users/${username}/following`,
+      following,
+      t('following'),
+      updateToast
+    )).filter((user: User) => user.type === UserType.User);
+
+    const followersData = await fetchAll(
+      `https://api.github.com/users/${username}/followers`,
+      followers,
+      t('followers'),
+      updateToast
+    );
 
     getNotFollowing(followingData, followersData);
     getNotFollowers(followingData, followersData);
@@ -75,14 +114,16 @@ const App = () => {
   }
 
   const getNotFollowing = (following: User[], followers: User[]) => {
-    const notFollowingData = following.filter(followingUser => !followers.some(follower => follower.login === followingUser.login));
+    const followerSet = new Set(followers.map(user => user.login));
+    const notFollowingData = following.filter(user => !followerSet.has(user.login));
     setNotFollowing(notFollowingData);
-  }
+  };
 
   const getNotFollowers = (following: User[], followers: User[]) => {
-    const notFollowersData = followers.filter(follower => !following.some(followingUser => followingUser.login === follower.login));
+    const followingSet = new Set(following.map(user => user.login));
+    const notFollowersData = followers.filter(user => !followingSet.has(user.login));
     setNotFollowers(notFollowersData);
-  }
+  };
 
 
 
@@ -97,7 +138,8 @@ const App = () => {
         </div>
 
         <div className="text-github-text-secondary italic w-full sm:w-2/3 mx-auto bg-github-card rounded-r-lg p-5 border-l-[6px] border-solid border-github-text-secondary">
-          <p><strong>{t('note')}:</strong> {t('noteText')}</p>
+          <p>📝 <strong>{t('note')}:</strong> {t('noteText')}<br /><br />
+            ⚠️ <strong>{t('heavyDataWarningTitle')}:</strong> {t('heavyDataWarningText')}</p>
         </div>
 
         <div className="flex justify-center w-full sm:w-2/3 mx-auto">
@@ -107,11 +149,7 @@ const App = () => {
             placeholder={t('usernameInput')} value={username}
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={(e) => {
-              if (
-                !!username &&
-                currentUsername.toLowerCase() !== username &&
-                e.key === 'Enter'
-              ) {
+              if (!!username && e.key === 'Enter') {
                 getAll();
               }
             }}
@@ -119,7 +157,7 @@ const App = () => {
           <button
             className="md:w-1/6 w-1/3 bg-github-button-primary-bg opacity-80 disabled:hover:opacity-80 hover:opacity-100 transition-all text-github-button-primary-text p-2 rounded-r-lg"
             type="button"
-            disabled={!username || currentUsername.toLowerCase() === username}
+            disabled={!username}
             onClick={getAll}>
             {t('usernameInputButton')}
           </button>
