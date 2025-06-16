@@ -193,14 +193,14 @@ const App = () => {
                 <UserCard key={data.login} data={data} btnText={t('unfollow')} />
               ))}
             </div>
-          ) : <p className="text-github-text-secondary group-hover:text-github-text-primary text-lg">No data</p> : null}
+          ) : <p className="text-github-text-secondary group-hover:text-github-text-primary text-lg">{t('noData')}</p> : null}
           {activeTab === 'Not Followers' ? notFollowers.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
               {notFollowers.map((data) => (
                 <UserCard key={data.login} data={data} btnText={t('follow')} />
               ))}
             </div>
-          ) : <p className="text-github-text-secondary group-hover:text-github-text-primary text-lg">No data</p> : null}
+          ) : <p className="text-github-text-secondary group-hover:text-github-text-primary text-lg">{t('noData')}</p> : null}
         </div>
 
         <div>

@@ -29,6 +29,7 @@ export default {
   tooManyData:
     "Too many {{dataLabel}} data ({{dataCount}}). Please try another user.",
   dataSuccessfullyFetched: "Following and followers data fetched successfully",
+  noData: "No Data",
 
   // Language
   english: "English",

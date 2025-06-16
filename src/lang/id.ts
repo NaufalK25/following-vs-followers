@@ -29,6 +29,7 @@ export default {
   tooManyData:
     "Data {{dataLabel}} terlalu banyak ({{dataCount}}). Coba pengguna lain.",
   dataSuccessfullyFetched: "Data pengikut dan diikuti berhasil diambil",
+  noData: "Tidak Ada Data",
 
   // Language
   english: "Inggris",
