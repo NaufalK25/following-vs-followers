@@ -6,9 +6,12 @@ import UserCard from './components/UserCard';
 import { User, UserType } from './type';
 import './App.css';
 
+type Tab = 'Not Following' | 'Not Followers';
+
 const App = () => {
   const { t } = useTranslation();
 
+  const [activeTab, setActiveTab] = useState<Tab>('Not Following');
   const [username, setUsername] = useState('');
   const [notFollowing, setNotFollowing] = useState<User[]>([]);
   const [notFollowers, setNotFollowers] = useState<User[]>([]);
@@ -163,24 +166,41 @@ const App = () => {
           </button>
         </div>
 
-        <div className="flex flex-col justify-center w-full sm:w-2/3 mx-auto gap-5">
-          <h2 className="text-github-text-primary font-semibold text-xl">{t('notFollowing')} ({notFollowing.length})</h2>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            {notFollowing.map((data) => (
-              <UserCard key={data.login} data={data} btnText={t('unfollow')} />
-            ))}
-          </div>
+        <div
+          role='tablist'
+          className='flex justify-center w-full sm:w-2/3 mx-auto border border-transparent border-b-github-border-muted'
+        >
+          <a
+            role='tab'
+            className={`${activeTab === 'Not Following' ? 'border-b-github-text-primary' : ''} border border-transparent pb-2 cursor-pointer flex flex-col justify-center w-full sm:w-2/3 mx-auto gap-5`}
+            onClick={() => setActiveTab('Not Following')}
+          >
+            <h2 className="text-github-text-primary font-semibold text-xl">{t('notFollowing')} ({notFollowing.length})</h2>
+          </a>
+          <a
+            role='tab'
+            className={`${activeTab === 'Not Followers' ? 'border-b-github-text-primary' : ''} text-right border border-transparent pb-2 cursor-pointer flex flex-col justify-center w-full sm:w-2/3 mx-auto gap-5`}
+            onClick={() => setActiveTab('Not Followers')}
+          >
+            <h2 className="text-github-text-primary font-semibold text-xl">{t('notFollowers')} ({notFollowers.length})</h2>
+          </a>
         </div>
 
         <div className="flex flex-col justify-center w-full sm:w-2/3 mx-auto gap-5">
-          <h2 className="text-github-text-primary font-semibold text-xl">{t('notFollowers')} ({notFollowers.length})</h2>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            {notFollowers.map((data) => (
-              <UserCard key={data.login} data={data} btnText={t('follow')} />
-            ))}
-          </div>
+          {activeTab === 'Not Following' ? notFollowing.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              {notFollowing.map((data) => (
+                <UserCard key={data.login} data={data} btnText={t('unfollow')} />
+              ))}
+            </div>
+          ) : <p className="text-github-text-secondary group-hover:text-github-text-primary text-lg">No data</p> : null}
+          {activeTab === 'Not Followers' ? notFollowers.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              {notFollowers.map((data) => (
+                <UserCard key={data.login} data={data} btnText={t('follow')} />
+              ))}
+            </div>
+          ) : <p className="text-github-text-secondary group-hover:text-github-text-primary text-lg">No data</p> : null}
         </div>
 
         <div>
